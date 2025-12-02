@@ -2,28 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Employee Portal – Employee of the Month & Leave Requests</title>
+  <title>Front Office Portal – Rocker of the Month & Leave Request</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Tailwind for quick, simple styling -->
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center">
   <div class="w-full max-w-5xl bg-white shadow-xl rounded-2xl p-4 sm:p-6 mb-6">
 
-    <!-- HEADER / LOGIN STATE -->
+    <!-- HEADER -->
     <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
       <div>
         <h1 class="text-2xl font-bold">Employee Portal</h1>
         <p class="text-sm text-slate-500">
-          Employee of the Month nominations & leave requests – simple and staff-friendly.
+          Rocker of the Month nominations & leave requests – made simple
         </p>
       </div>
-      <div id="authArea" class="text-right">
-        <!-- Filled by JS -->
-      </div>
+      <div id="authArea" class="text-right"></div>
     </header>
 
-    <!-- NAV TABS -->
+    <!-- NAV -->
     <nav id="mainNav" class="mb-4 hidden">
       <div class="inline-flex rounded-xl border bg-slate-50 overflow-hidden text-sm">
         <button data-section="nominate" class="tab-btn px-3 py-2 font-medium bg-white">
@@ -33,15 +30,18 @@
           Nomination History
         </button>
         <button data-section="leave" class="tab-btn px-3 py-2">
-          Leave Request
+          My Leave
         </button>
-        <button data-section="availability" class="tab-btn px-3 py-2">
+        <button data-section="availability" data-admin-only="true" class="tab-btn px-3 py-2 hidden">
           Leave Availability
+        </button>
+        <button data-section="admin" data-admin-only="true" class="tab-btn px-3 py-2 hidden">
+          Admin
         </button>
       </div>
     </nav>
 
-    <!-- LOGIN CARD (shown when logged out) -->
+    <!-- LOGIN SECTION -->
     <section id="loginSection" class="mt-4">
       <div class="border rounded-2xl p-6 text-center">
         <h2 class="text-xl font-semibold mb-2">Sign in to continue</h2>
@@ -57,14 +57,14 @@
       </div>
     </section>
 
-    <!-- MAIN APP (hidden until logged in) -->
+    <!-- MAIN APP -->
     <main id="appSection" class="hidden">
 
-      <!-- NOMINATE SECTION -->
+      <!-- NOMINATION FORM -->
       <section id="section-nominate" class="space-y-5">
         <h2 class="text-xl font-semibold">Employee of the Month Nomination</h2>
         <p class="text-sm text-slate-500">
-          Please enter who you are nominating and why. Be as specific as possible – real examples help.
+          Enter who you are nominating and why. Be specific – real examples help.
         </p>
 
         <form id="nominationForm" class="space-y-4">
@@ -76,7 +76,7 @@
                 type="text"
                 required
                 class="w-full border rounded-lg px-3 py-2 text-sm"
-                placeholder="e.g. Remla A."
+                placeholder="e.g. Hamid Basheer."
               />
             </div>
             <div>
@@ -86,7 +86,7 @@
                 type="text"
                 required
                 class="w-full border rounded-lg px-3 py-2 text-sm"
-                placeholder="e.g. Front Office / Housekeeping"
+                placeholder="e.g. Front Office / Section"
               />
             </div>
           </div>
@@ -103,10 +103,10 @@
                 <option value="0">0 – No guest comments yet</option>
                 <option value="5">5 – Some guest mentions</option>
                 <option value="10">10 – Frequent guest recognition</option>
-                <option value="15">15 – Outstanding guest feedback</option>
+                <option value="15">15 – Outstanding performance</option>
               </select>
               <p class="text-[11px] text-slate-400 mt-1">
-                You can adjust this later as HR/manager based on actual guest reviews.
+                You can adjust this later with MOD based on actual guest reviews.
               </p>
             </div>
 
@@ -127,7 +127,7 @@
               rows="4"
               required
               class="w-full border rounded-lg px-3 py-2 text-sm"
-              placeholder="Describe specific moments, behavior, teamwork, guest comments, or leadership examples."
+              placeholder="Describe situations, guest feedback, teamwork, attitude, going extra mile..."
             ></textarea>
           </div>
 
@@ -143,11 +143,11 @@
         <div id="nominationMessage" class="text-sm mt-2"></div>
       </section>
 
-      <!-- HISTORY SECTION -->
+      <!-- NOMINATION HISTORY -->
       <section id="section-history" class="space-y-4 hidden">
         <h2 class="text-xl font-semibold">Nomination History</h2>
         <p class="text-sm text-slate-500">
-          Below are recent nominations. You can see who was nominated, by whom, and the reasons.
+          Recent nominations submitted by the team.
         </p>
 
         <div id="historyContainer" class="border rounded-2xl p-3 max-h-[420px] overflow-y-auto text-sm">
@@ -155,11 +155,11 @@
         </div>
       </section>
 
-      <!-- LEAVE REQUEST SECTION -->
+      <!-- MY LEAVE -->
       <section id="section-leave" class="space-y-4 hidden">
-        <h2 class="text-xl font-semibold">Leave Request</h2>
+        <h2 class="text-xl font-semibold">My Leave Requests</h2>
         <p class="text-sm text-slate-500">
-          Submit an off-day or annual leave request. Management can review and update the status.
+          Submit off-day or annual leave requests. Management will review and update the status.
         </p>
 
         <form id="leaveForm" class="space-y-4">
@@ -213,22 +213,44 @@
         </div>
       </section>
 
-      <!-- AVAILABILITY SECTION -->
+      <!-- AVAILABILITY (ADMIN ONLY) -->
       <section id="section-availability" class="space-y-4 hidden">
-        <h2 class="text-xl font-semibold">Leave Availability</h2>
+        <h2 class="text-xl font-semibold">Leave Availability (Approved)</h2>
         <p class="text-sm text-slate-500">
-          Simple overview of approved leave so you can see who is off and when.
+          Overview of approved leave to help plan the operation.
         </p>
 
         <div id="availabilityList" class="border rounded-2xl p-3 max-h-[420px] overflow-y-auto text-xs space-y-2"></div>
       </section>
 
+      <!-- ADMIN SECTION -->
+      <section id="section-admin" class="space-y-6 hidden">
+        <h2 class="text-xl font-semibold">Admin Panel</h2>
+
+        <!-- Leave approvals -->
+        <div>
+          <h3 class="text-lg font-semibold mb-1">Leave Requests – Approvals</h3>
+          <p class="text-xs text-slate-500 mb-2">
+            Approve or reject pending off-day and annual leave requests.
+          </p>
+          <div id="adminLeaveList" class="border rounded-2xl p-3 max-h-[320px] overflow-y-auto text-xs space-y-2"></div>
+        </div>
+
+        <!-- Top nominations -->
+        <div>
+          <h3 class="text-lg font-semibold mb-1">Top Nominations</h3>
+          <p class="text-xs text-slate-500 mb-2">
+            Ranked by number of nominations, then guest feedback points.
+          </p>
+          <div id="topNominationsList" class="border rounded-2xl p-3 max-h-[320px] overflow-y-auto text-xs"></div>
+        </div>
+      </section>
+
     </main>
   </div>
 
-  <!-- FIREBASE + APP LOGIC -->
+  <!-- FIREBASE & APP LOGIC -->
   <script type="module">
-    // Firebase imports from CDN
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getFirestore,
@@ -239,6 +261,8 @@
       where,
       orderBy,
       serverTimestamp,
+      doc,
+      updateDoc,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import {
       getAuth,
@@ -248,8 +272,8 @@
       signOut,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // 🔧 REPLACE with your Firebase config
-   const firebaseConfig = {
+    // 🔧 Replace with your Firebase config
+const firebaseConfig = {
   apiKey: "AIzaSyCX44FHUpCQY-ma62m89rx3ah6s_gJtcY4",
   authDomain: "band-portal-8225e.firebaseapp.com",
   projectId: "band-portal-8225e",
@@ -258,29 +282,35 @@
   appId: "1:975187203610:web:c044a2e0d3e2fd29b1e3a3"
 };
 
+    // 🔧 Set your super admin Gmail addresses here
+    const SUPER_ADMIN_EMAILS = [
+      "hamid.bashyr@gmail.com",
+      "YOUR_ADMIN_2@gmail.com",
+    ];
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // DOM elements
     const authArea = document.getElementById("authArea");
     const loginSection = document.getElementById("loginSection");
     const appSection = document.getElementById("appSection");
     const mainNav = document.getElementById("mainNav");
     const googleSignInBtn = document.getElementById("googleSignInBtn");
-
     const tabButtons = document.querySelectorAll(".tab-btn");
+
     const sections = {
       nominate: document.getElementById("section-nominate"),
       history: document.getElementById("section-history"),
       leave: document.getElementById("section-leave"),
       availability: document.getElementById("section-availability"),
+      admin: document.getElementById("section-admin"),
     };
 
     let currentUser = null;
+    let isSuperAdmin = false;
 
-    // === AUTH ===
     googleSignInBtn.addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
@@ -295,8 +325,9 @@
 
     onAuthStateChanged(auth, async (user) => {
       currentUser = user || null;
+      isSuperAdmin = !!(user && SUPER_ADMIN_EMAILS.includes(user.email));
+
       if (!user) {
-        // Logged OUT
         authArea.innerHTML = "";
         loginSection.classList.remove("hidden");
         appSection.classList.add("hidden");
@@ -304,11 +335,17 @@
         return;
       }
 
-      // Logged IN
       authArea.innerHTML = `
         <div class="text-xs text-slate-600">
           <div class="font-semibold">${user.displayName || "Logged in"}</div>
-          <div class="">${user.email || ""}</div>
+          <div>${user.email || ""}</div>
+          <div class="mt-1">
+            <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] ${
+              isSuperAdmin ? "border-emerald-300 text-emerald-700 bg-emerald-50" : "border-slate-200 text-slate-500"
+            }">
+              ${isSuperAdmin ? "Super Admin" : "Staff"}
+            </span>
+          </div>
           <button id="logoutBtn" class="mt-1 inline-flex text-[11px] text-indigo-600 border border-indigo-200 rounded-full px-2 py-0.5 hover:bg-indigo-50">
             Sign out
           </button>
@@ -320,14 +357,24 @@
       appSection.classList.remove("hidden");
       mainNav.classList.remove("hidden");
 
+      // Show/hide admin-only buttons + sections
+      document.querySelectorAll("[data-admin-only='true']").forEach((el) => {
+        el.classList.toggle("hidden", !isSuperAdmin);
+      });
+      sections.availability.classList.toggle("hidden", !isSuperAdmin);
+      sections.admin.classList.toggle("hidden", !isSuperAdmin);
+
       setDefaultMonth();
       switchSection("nominate");
       await loadHistory();
       await loadMyLeaveRequests();
-      await loadAvailability();
+      if (isSuperAdmin) {
+        await loadAvailability();
+        await loadAllLeaveRequests();
+        await loadTopNominations();
+      }
     });
 
-    // === TAB NAVIGATION ===
     function switchSection(key) {
       for (const name in sections) {
         sections[name].classList.toggle("hidden", name !== key);
@@ -342,16 +389,20 @@
     }
 
     tabButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", async () => {
         const section = btn.dataset.section;
         switchSection(section);
-        if (section === "history") loadHistory();
-        if (section === "leave") loadMyLeaveRequests();
-        if (section === "availability") loadAvailability();
+        if (section === "history") await loadHistory();
+        if (section === "leave") await loadMyLeaveRequests();
+        if (section === "availability" && isSuperAdmin) await loadAvailability();
+        if (section === "admin" && isSuperAdmin) {
+          await loadAllLeaveRequests();
+          await loadTopNominations();
+        }
       });
     });
 
-    // === NOMINATION FORM ===
+    // NOMINATIONS
     const nominationForm = document.getElementById("nominationForm");
     const nomineeNameEl = document.getElementById("nomineeName");
     const nomineeDepartmentEl = document.getElementById("nomineeDepartment");
@@ -360,6 +411,7 @@
     const nominationReasonEl = document.getElementById("nominationReason");
     const nominationMessageEl = document.getElementById("nominationMessage");
     const submitNominationBtn = document.getElementById("submitNominationBtn");
+    const historyList = document.getElementById("historyList");
 
     function setDefaultMonth() {
       const now = new Date();
@@ -408,6 +460,7 @@
         nominationForm.reset();
         setDefaultMonth();
         await loadHistory();
+        if (isSuperAdmin) await loadTopNominations();
       } catch (err) {
         console.error(err);
         nominationMessageEl.textContent = "Something went wrong, please try again.";
@@ -417,13 +470,9 @@
       }
     });
 
-    // === NOMINATION HISTORY ===
-    const historyList = document.getElementById("historyList");
-
     async function loadHistory() {
       historyList.innerHTML = '<div class="text-slate-400 text-xs">Loading nominations...</div>';
       try {
-        // Simple query: order by createdAt (single field)
         const qNom = query(
           collection(db, "nominations"),
           orderBy("createdAt", "desc")
@@ -437,19 +486,13 @@
 
         const items = [];
         snap.forEach((docSnap) => {
-          const d = docSnap.data();
-          items.push(d);
+          items.push(docSnap.data());
         });
 
         historyList.innerHTML = "";
         items.forEach((d) => {
-          const createdAtDate = d.createdAt?.toDate
-            ? d.createdAt.toDate()
-            : null;
-          const dateStr = createdAtDate
-            ? createdAtDate.toLocaleString()
-            : "(date pending)";
-
+          const createdAtDate = d.createdAt?.toDate ? d.createdAt.toDate() : null;
+          const dateStr = createdAtDate ? createdAtDate.toLocaleString() : "(date pending)";
           const div = document.createElement("div");
           div.className = "border rounded-xl p-2.5";
           div.innerHTML = `
@@ -481,7 +524,7 @@
       }
     }
 
-    // === LEAVE REQUESTS ===
+    // LEAVE REQUESTS (MY)
     const leaveForm = document.getElementById("leaveForm");
     const leaveTypeEl = document.getElementById("leaveType");
     const leaveStartEl = document.getElementById("leaveStart");
@@ -530,7 +573,7 @@
         leaveMessageEl.className = "text-sm text-green-600";
         leaveForm.reset();
         await loadMyLeaveRequests();
-        await loadAvailability();
+        if (isSuperAdmin) await loadAvailability();
       } catch (err) {
         console.error(err);
         leaveMessageEl.textContent =
@@ -560,7 +603,6 @@
 
         const rows = [];
         snap.forEach((docSnap) => rows.push(docSnap.data()));
-        // Sort in JS by startDate
         rows.sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
 
         myLeaveList.innerHTML = "";
@@ -594,10 +636,11 @@
       }
     }
 
-    // === AVAILABILITY (ALL APPROVED LEAVE) ===
+    // AVAILABILITY (ADMIN)
     const availabilityList = document.getElementById("availabilityList");
 
     async function loadAvailability() {
+      if (!isSuperAdmin) return;
       availabilityList.innerHTML =
         '<div class="text-slate-400">Loading approved leave...</div>';
       try {
@@ -615,7 +658,6 @@
 
         const rows = [];
         snap.forEach((docSnap) => rows.push(docSnap.data()));
-        // Sort by startDate locally
         rows.sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
 
         availabilityList.innerHTML = "";
@@ -637,6 +679,179 @@
         console.error(err);
         availabilityList.innerHTML =
           '<div class="text-red-500 text-xs">Failed to load availability.</div>';
+      }
+    }
+
+    // ADMIN – LEAVE APPROVALS
+    const adminLeaveList = document.getElementById("adminLeaveList");
+
+    async function loadAllLeaveRequests() {
+      if (!isSuperAdmin) return;
+      adminLeaveList.innerHTML =
+        '<div class="text-slate-400">Loading leave requests...</div>';
+      try {
+        const qAll = query(
+          collection(db, "leaveRequests"),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(qAll);
+
+        if (snap.empty) {
+          adminLeaveList.innerHTML =
+            '<div class="text-slate-400">No leave requests yet.</div>';
+          return;
+        }
+
+        const rows = [];
+        snap.forEach((docSnap) => {
+          rows.push({ id: docSnap.id, ...docSnap.data() });
+        });
+
+        adminLeaveList.innerHTML = "";
+        rows.forEach((r) => {
+          const div = document.createElement("div");
+          div.className =
+            "border rounded-xl px-2 py-1.5 flex justify-between items-center gap-2";
+          const statusClass =
+            r.status === "approved"
+              ? "text-emerald-600"
+              : r.status === "rejected"
+              ? "text-red-600"
+              : "text-amber-600";
+          div.innerHTML = `
+            <div>
+              <div class="text-xs font-semibold">${r.userName || r.userEmail}</div>
+              <div class="text-[11px] text-slate-600">
+                ${r.type.toUpperCase()} • ${r.startDate} → ${r.endDate}
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-semibold ${statusClass}">
+                ${r.status}
+              </span>
+              ${
+                r.status === "pending"
+                  ? `
+                <button class="px-2 py-0.5 text-[11px] rounded-full bg-emerald-600 text-white hover:bg-emerald-700" data-action="approve">
+                  Approve
+                </button>
+                <button class="px-2 py-0.5 text-[11px] rounded-full bg-red-600 text-white hover:bg-red-700" data-action="reject">
+                  Reject
+                </button>`
+                  : ""
+              }
+            </div>
+          `;
+
+          const approveBtn = div.querySelector("[data-action='approve']");
+          const rejectBtn = div.querySelector("[data-action='reject']");
+          if (approveBtn) {
+            approveBtn.addEventListener("click", () =>
+              updateLeaveStatus(r.id, "approved")
+            );
+          }
+          if (rejectBtn) {
+            rejectBtn.addEventListener("click", () =>
+              updateLeaveStatus(r.id, "rejected")
+            );
+          }
+
+          adminLeaveList.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        adminLeaveList.innerHTML =
+          '<div class="text-red-500 text-xs">Failed to load leave requests.</div>';
+      }
+    }
+
+    async function updateLeaveStatus(id, status) {
+      if (!isSuperAdmin) return;
+      try {
+        await updateDoc(doc(db, "leaveRequests", id), { status });
+        await loadAllLeaveRequests();
+        await loadAvailability();
+        if (currentUser) await loadMyLeaveRequests();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to update leave status: " + err.message);
+      }
+    }
+
+    // ADMIN – TOP NOMINATIONS
+    const topNominationsList = document.getElementById("topNominationsList");
+
+    async function loadTopNominations() {
+      if (!isSuperAdmin) return;
+      topNominationsList.innerHTML =
+        '<div class="text-slate-400">Loading nominations...</div>';
+      try {
+        const qNom = query(
+          collection(db, "nominations"),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(qNom);
+
+        if (snap.empty) {
+          topNominationsList.innerHTML =
+            '<div class="text-slate-400">No nominations yet.</div>';
+          return;
+        }
+
+        // Aggregate by nominee (name + department)
+        const map = new Map();
+        snap.forEach((docSnap) => {
+          const d = docSnap.data();
+          const key = `${d.nomineeName || ""}||${d.nomineeDepartment || ""}`;
+          const current = map.get(key) || {
+            nomineeName: d.nomineeName || "",
+            nomineeDepartment: d.nomineeDepartment || "",
+            count: 0,
+            totalGuestPoints: 0,
+          };
+          current.count += 1;
+          current.totalGuestPoints += Number(d.guestFeedbackPoints || 0);
+          map.set(key, current);
+        });
+
+        const rows = Array.from(map.values());
+        rows.sort((a, b) => {
+          if (b.count !== a.count) return b.count - a.count;
+          return b.totalGuestPoints - a.totalGuestPoints;
+        });
+
+        // Render as simple table
+        let html = `
+          <table class="min-w-full text-xs border border-slate-200 rounded-lg overflow-hidden">
+            <thead class="bg-slate-100">
+              <tr>
+                <th class="px-2 py-1 text-left">#</th>
+                <th class="px-2 py-1 text-left">Nominee</th>
+                <th class="px-2 py-1 text-left">Department</th>
+                <th class="px-2 py-1 text-right">Nominations</th>
+                <th class="px-2 py-1 text-right">Guest Points</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        rows.forEach((r, index) => {
+          html += `
+            <tr class="border-t">
+              <td class="px-2 py-1">${index + 1}</td>
+              <td class="px-2 py-1">${r.nomineeName}</td>
+              <td class="px-2 py-1">${r.nomineeDepartment}</td>
+              <td class="px-2 py-1 text-right">${r.count}</td>
+              <td class="px-2 py-1 text-right">${r.totalGuestPoints}</td>
+            </tr>
+          `;
+        });
+        html += "</tbody></table>";
+
+        topNominationsList.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        topNominationsList.innerHTML =
+          '<div class="text-red-500 text-xs">Failed to load top nominations.</div>';
       }
     }
   </script>
