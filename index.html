@@ -2,298 +2,336 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Front Office Portal – Rocker of the Month & Leave Request</title>
+  <title>Front Office Portal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      background: linear-gradient(
+        180deg,
+        #0ea5e9 0%,
+        #38bdf8 26%,
+        #67e8f9 52%,
+        #e0f2fe 72%,
+        #fefce8 100%
+      );
+      overflow-x: hidden;
+    }
+
+    /* Waves */
+    .wave-wrapper {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 240px;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0;
+      width: 200%;
+      height: 100%;
+      background-repeat: repeat-x;
+      background-size: 50% 100%;
+      animation: waveMove 18s linear infinite;
+      opacity: 0.55;
+      filter: blur(0.1px);
+    }
+    .wave.wave2 { animation-duration: 28s; opacity: 0.30; bottom: 14px; }
+    .wave.wave3 { animation-duration: 40s; opacity: 0.18; bottom: 28px; }
+
+    @keyframes waveMove {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    .content-layer { position: relative; z-index: 10; }
+
+    /* Small UI polish */
+    .chip { font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.08); }
+    .glass { background: rgba(255,255,255,0.88); backdrop-filter: blur(10px); }
+    .btn { border-radius: 14px; padding: 10px 14px; font-weight: 700; font-size: 13px; }
+    .btnPrimary { background: #4f46e5; color: white; }
+    .btnPrimary:hover { background: #4338ca; }
+    .btnGhost { background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); }
+    .btnGhost:hover { background: rgba(255,255,255,0.95); }
+
+    /* Tabs */
+    .tab { padding: 9px 12px; border-radius: 14px; font-weight: 700; font-size: 13px; border: 1px solid rgba(0,0,0,0.08); background: rgba(255,255,255,0.65); }
+    .tab.active { background: white; }
+    .muted { color: rgba(15,23,42,0.65); }
+  </style>
 </head>
 
-<body class="min-h-screen bg-slate-50">
-  <!-- Maldivian theme background -->
-  <div class="fixed inset-0 -z-10">
-    <div class="absolute inset-0 bg-gradient-to-b from-sky-100 via-cyan-50 to-emerald-50"></div>
-    <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-cyan-200/40 blur-3xl"></div>
-    <div class="absolute top-40 -right-24 w-[28rem] h-[28rem] rounded-full bg-emerald-200/35 blur-3xl"></div>
-    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[60rem] h-64 bg-sky-200/20 blur-2xl"></div>
-  </div>
+<body class="min-h-screen p-4 sm:p-8">
+  <div class="content-layer mx-auto w-full max-w-6xl">
+    <div class="glass shadow-xl rounded-3xl p-4 sm:p-6">
 
-  <div class="min-h-screen flex items-center justify-center px-3 py-10">
-    <div class="w-full max-w-6xl bg-white/85 backdrop-blur shadow-xl rounded-2xl p-4 sm:p-6">
-
-      <!-- HEADER -->
-      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-500 to-emerald-500 text-white flex items-center justify-center font-black">
-            FO
-          </div>
-          <div>
-            <h1 class="text-2xl font-bold text-slate-900">Front Office Portal</h1>
-            <p class="text-sm text-slate-600">Rocker of the Month • Leave Requests • Simple & Fast</p>
-          </div>
+      <!-- Header -->
+      <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div>
+          <h1 class="text-2xl font-black text-slate-900">Front Office Portal</h1>
+          <p class="text-sm muted">Rocker nominations + Leave requests (Maldivian theme 🌊)</p>
         </div>
-
-        <div id="authArea" class="text-right"></div>
+        <div id="authArea"></div>
       </header>
 
-      <!-- NAV -->
-      <nav id="mainNav" class="mb-4 hidden">
-        <div class="inline-flex rounded-xl border border-slate-200 bg-white overflow-hidden text-sm shadow-sm">
-          <button data-section="nominate" class="tab-btn px-3 py-2 font-semibold bg-slate-50">
-            Nominate
-          </button>
-          <button data-section="history" class="tab-btn px-3 py-2">
-            Nomination History
-          </button>
-          <button data-section="leave" class="tab-btn px-3 py-2">
-            My Leave
-          </button>
-          <button data-section="availability" data-admin-only="true" class="tab-btn px-3 py-2 hidden">
-            Leave Availability
-          </button>
-          <button data-section="admin" data-admin-only="true" class="tab-btn px-3 py-2 hidden">
-            Admin
-          </button>
-        </div>
-      </nav>
-
-      <!-- LOGIN SECTION -->
-      <section id="loginSection" class="mt-4">
-        <div class="border border-slate-200 rounded-2xl p-8 text-center bg-white shadow-sm">
-          <h2 class="text-xl font-semibold mb-2">Sign in to continue</h2>
-          <p class="text-sm text-slate-600 mb-5">
-            Please sign in with Google to submit nominations and leave requests.
-          </p>
-
-          <button
-            id="googleSignInBtn"
-            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-black"
-          >
+      <!-- Login -->
+      <section id="loginSection" class="mt-3">
+        <div class="bg-white rounded-3xl border p-6 text-center">
+          <h2 class="text-xl font-bold mb-2">Sign in to continue</h2>
+          <p class="text-sm muted mb-4">Use your work Gmail to access nominations and leave requests.</p>
+          <button id="googleSignInBtn" class="btn btnPrimary inline-flex items-center gap-2">
             Sign in with Google
           </button>
-
-          <p class="text-xs text-slate-500 mt-4">
-            Tip: If you see “unauthorized domain”, add your domain in Firebase Auth → Authorized domains.
-          </p>
         </div>
       </section>
 
-      <!-- MAIN APP -->
-      <main id="appSection" class="hidden">
+      <!-- Nav -->
+      <nav id="mainNav" class="hidden my-4">
+        <div class="flex flex-wrap gap-2">
+          <button class="tab active" data-section="home">Home</button>
+          <button class="tab" data-section="nominate">Nominate</button>
+          <button class="tab" data-section="history">History</button>
+          <button class="tab" data-section="leave">My Leave</button>
+          <button class="tab hidden" data-admin-only="true" data-section="availability">Availability</button>
+          <button class="tab hidden" data-admin-only="true" data-section="admin">Admin</button>
+        </div>
+      </nav>
 
-        <!-- NOMINATION FORM -->
-        <section id="section-nominate" class="space-y-5">
-          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h2 class="text-xl font-semibold">Rocker of the Month Nomination</h2>
-              <p class="text-sm text-slate-600">
-                Nominate a teammate and explain why. One nomination per nominee per month (per staff).
-              </p>
+      <!-- App -->
+      <main id="appSection" class="hidden space-y-6">
+
+        <!-- HOME -->
+        <section id="section-home" class="space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <img id="profileImg" src="" alt="Profile" class="w-14 h-14 rounded-2xl object-cover border" />
+                <div>
+                  <div class="text-sm font-black" id="profileName">-</div>
+                  <div class="text-xs muted" id="profileEmail">-</div>
+                  <div class="mt-1 flex items-center gap-2">
+                    <span id="roleChip" class="chip bg-slate-50 text-slate-700">Staff</span>
+                    <span id="starsChip" class="chip bg-amber-50 text-amber-800">⭐ 0.0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <label class="btn btnGhost cursor-pointer">
+                  Upload Photo
+                  <input id="photoInput" type="file" accept="image/*" class="hidden" />
+                </label>
+                <button id="logoutBtn" class="btn btnGhost">Sign out</button>
+              </div>
             </div>
-            <div class="text-xs text-slate-600">
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 bg-white">
-                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                Voting open: <span id="votingStatusText" class="font-semibold">Checking…</span>
-              </span>
+
+            <div class="mt-4 grid sm:grid-cols-3 gap-3">
+              <div class="rounded-2xl bg-sky-50 border p-3">
+                <div class="text-xs muted">Nominations open</div>
+                <div class="text-sm font-black" id="nominationsOpenText">-</div>
+              </div>
+              <div class="rounded-2xl bg-sky-50 border p-3">
+                <div class="text-xs muted">Closing date</div>
+                <div class="text-sm font-black" id="closingDateText">-</div>
+              </div>
+              <div class="rounded-2xl bg-sky-50 border p-3">
+                <div class="text-xs muted">Current month</div>
+                <div class="text-sm font-black" id="currentMonthText">-</div>
+              </div>
             </div>
           </div>
 
-          <form id="nominationForm" class="space-y-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm">
-            <div class="grid sm:grid-cols-2 gap-3">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-2 mb-2">
               <div>
-                <label class="block text-sm font-medium mb-1">Nominee name</label>
-                <input
-                  id="nomineeName"
-                  type="text"
-                  required
-                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white"
-                  placeholder="e.g. Faheel"
-                />
+                <h3 class="text-lg font-black">Top Nominations (This Month)</h3>
+                <p class="text-xs muted">Ranked by number of nominations, then points.</p>
               </div>
-              <div>
-                <label class="block text-sm font-medium mb-1">Nominee department</label>
-                <input
-                  id="nomineeDepartment"
-                  type="text"
-                  required
-                  class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white"
-                  placeholder="e.g. Front Office"
-                />
-              </div>
+              <button id="refreshTopBtn" class="btn btnGhost">Refresh</button>
             </div>
-
-            <div class="grid sm:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-sm font-medium mb-1">Guest feedback recognition points</label>
-                <select id="guestFeedbackPoints" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white">
-                  <option value="0">0 – No guest comments yet</option>
-                  <option value="5">5 – Some guest mentions</option>
-                  <option value="10">10 – Frequent guest recognition</option>
-                  <option value="15">15 – Outstanding performance</option>
-                </select>
-                <p class="text-[11px] text-slate-500 mt-1">Admins can adjust with MOD based on actual guest reviews.</p>
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium mb-1">Nomination month</label>
-                <input id="nominationMonth" type="month" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white" />
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium mb-1">Why are you nominating this person?</label>
-              <textarea
-                id="nominationReason"
-                rows="4"
-                required
-                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white"
-                placeholder="Describe real examples: guest feedback, teamwork, attitude, going extra mile..."
-              ></textarea>
-            </div>
-
-            <button
-              id="submitNominationBtn"
-              type="submit"
-              class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 text-white text-sm font-semibold hover:opacity-95 disabled:opacity-60"
-            >
-              Submit nomination
-            </button>
-
-            <div id="nominationMessage" class="text-sm"></div>
-          </form>
-        </section>
-
-        <!-- NOMINATION HISTORY -->
-        <section id="section-history" class="space-y-4 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h2 class="text-xl font-semibold">Nomination History</h2>
-              <p class="text-sm text-slate-600">Filter by month to view nominations.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <label class="text-xs text-slate-600">Month</label>
-              <input id="historyMonth" type="month" class="border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white" />
-              <button id="refreshHistoryBtn" class="px-3 py-2 rounded-lg border border-slate-200 text-sm bg-white hover:bg-slate-50">
-                Apply
-              </button>
-            </div>
-          </div>
-
-          <div class="border border-slate-200 rounded-2xl p-3 bg-white shadow-sm max-h-[480px] overflow-y-auto">
-            <div id="historyList" class="space-y-3 text-sm"></div>
+            <div id="topList" class="text-sm space-y-2"></div>
           </div>
         </section>
 
-        <!-- MY LEAVE -->
-        <section id="section-leave" class="space-y-4 hidden">
-          <h2 class="text-xl font-semibold">My Leave Requests</h2>
-          <p class="text-sm text-slate-600">
-            Submit off-day or annual leave. Management will review and update status.
-          </p>
-
-          <form id="leaveForm" class="space-y-4 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm">
-            <div class="grid sm:grid-cols-3 gap-3">
+        <!-- NOMINATE -->
+        <section id="section-nominate" class="hidden space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:justify-between gap-2">
               <div>
-                <label class="block text-sm font-medium mb-1">Leave type</label>
-                <select id="leaveType" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white">
-                  <option value="off-day">Off day</option>
-                  <option value="annual">Annual leave</option>
-                </select>
+                <h2 class="text-xl font-black">Rocker Nomination</h2>
+                <p class="text-sm muted">No duplicate nominations. Voting auto-closes end of month (or admin config).</p>
               </div>
-
-              <div>
-                <label class="block text-sm font-medium mb-1">Start date</label>
-                <input id="leaveStart" type="date" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white" />
-              </div>
-
-              <div>
-                <label class="block text-sm font-medium mb-1">End date</label>
-                <input id="leaveEnd" type="date" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white" />
+              <div class="text-right">
+                <div class="chip bg-slate-50 text-slate-700 inline-flex items-center gap-2">
+                  <span>Month:</span> <span id="nomMonthBadge" class="font-black">-</span>
+                </div>
               </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium mb-1">Reason</label>
-              <input id="leaveReason" type="text" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white"
-                     placeholder="e.g. Family event / appointment / rest day" />
+            <div id="nominationClosedBanner" class="hidden mt-3 rounded-2xl border bg-rose-50 p-3 text-sm text-rose-800">
+              Nominations are currently closed.
             </div>
 
-            <button
-              id="submitLeaveBtn"
-              type="submit"
-              class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-600 text-white text-sm font-semibold hover:opacity-95 disabled:opacity-60"
-            >
-              Submit leave request
-            </button>
+            <form id="nominationForm" class="mt-4 space-y-4">
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-bold">Nominee name</label>
+                  <input id="nomineeName" class="w-full border rounded-2xl px-3 py-2 text-sm" placeholder="e.g. Faheel" required />
+                </div>
+                <div>
+                  <label class="text-sm font-bold">Department</label>
+                  <input id="nomineeDept" class="w-full border rounded-2xl px-3 py-2 text-sm" placeholder="Front Office" required />
+                </div>
+              </div>
 
-            <div id="leaveMessage" class="text-sm mt-1"></div>
-          </form>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-bold">Guest feedback points</label>
+                  <select id="guestPoints" class="w-full border rounded-2xl px-3 py-2 text-sm">
+                    <option value="0">0 – No mentions</option>
+                    <option value="5">5 – Guest mentioned</option>
+                    <option value="10">10 – Strong recognition</option>
+                    <option value="15">15 – Outstanding</option>
+                  </select>
+                  <p class="text-[11px] muted mt-1">Adds extra weight for staff recognized by guests.</p>
+                </div>
+                <div>
+                  <label class="text-sm font-bold">Nomination month</label>
+                  <input id="nominationMonth" type="month" class="w-full border rounded-2xl px-3 py-2 text-sm" />
+                </div>
+              </div>
 
-          <div>
-            <h3 class="text-sm font-semibold mt-4 mb-2">My requests</h3>
-            <div id="myLeaveList" class="border border-slate-200 rounded-2xl p-3 bg-white shadow-sm max-h-[300px] overflow-y-auto text-xs space-y-2"></div>
+              <div>
+                <label class="text-sm font-bold">Reason (required)</label>
+                <textarea id="nominationReason" rows="4" class="w-full border rounded-2xl px-3 py-2 text-sm" placeholder="Explain what they did, guest feedback, teamwork, extra mile..." required></textarea>
+              </div>
+
+              <button id="submitNominationBtn" class="btn btnPrimary">Submit nomination</button>
+              <div id="nominationMessage" class="text-sm mt-2"></div>
+            </form>
           </div>
         </section>
 
-        <!-- AVAILABILITY (ADMIN ONLY) -->
-        <section id="section-availability" class="space-y-4 hidden">
-          <h2 class="text-xl font-semibold">Leave Availability (Approved)</h2>
-          <p class="text-sm text-slate-600">Overview of approved leave to help plan the operation.</p>
+        <!-- HISTORY -->
+        <section id="section-history" class="hidden space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <h2 class="text-xl font-black">Nomination History</h2>
+                <p class="text-sm muted">Filter by month.</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <input id="historyMonth" type="month" class="border rounded-2xl px-3 py-2 text-sm" />
+                <button id="historyLoadBtn" class="btn btnGhost">Load</button>
+              </div>
+            </div>
 
-          <div id="availabilityList" class="border border-slate-200 rounded-2xl p-3 bg-white shadow-sm max-h-[480px] overflow-y-auto text-xs space-y-2"></div>
+            <div id="historyList" class="mt-4 space-y-3 max-h-[520px] overflow-y-auto"></div>
+          </div>
+        </section>
+
+        <!-- LEAVE -->
+        <section id="section-leave" class="hidden space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <h2 class="text-xl font-black">My Leave Requests</h2>
+            <p class="text-sm muted">Reason is required. Admin can approve/reject with comment.</p>
+
+            <form id="leaveForm" class="mt-4 space-y-4">
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="text-sm font-bold">Leave type</label>
+                  <select id="leaveType" class="w-full border rounded-2xl px-3 py-2 text-sm">
+                    <option value="off-day">Off day</option>
+                    <option value="annual">Annual leave</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-sm font-bold">Start date</label>
+                  <input id="leaveStart" type="date" required class="w-full border rounded-2xl px-3 py-2 text-sm" />
+                </div>
+                <div>
+                  <label class="text-sm font-bold">End date</label>
+                  <input id="leaveEnd" type="date" required class="w-full border rounded-2xl px-3 py-2 text-sm" />
+                </div>
+              </div>
+
+              <div>
+                <label class="text-sm font-bold">Reason (required)</label>
+                <textarea id="leaveReason" rows="3" required class="w-full border rounded-2xl px-3 py-2 text-sm" placeholder="e.g. Family event / medical appointment / personal..."></textarea>
+              </div>
+
+              <button id="submitLeaveBtn" class="btn btnPrimary">Submit leave request</button>
+              <div id="leaveMessage" class="text-sm mt-2"></div>
+            </form>
+
+            <div class="mt-6">
+              <h3 class="text-sm font-black mb-2">My requests</h3>
+              <div id="myLeaveList" class="space-y-2"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- AVAILABILITY -->
+        <section id="section-availability" class="hidden space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5">
+            <h2 class="text-xl font-black">Leave Availability (Approved)</h2>
+            <p class="text-sm muted">Admin-only view for operational planning.</p>
+            <div id="availabilityList" class="mt-4 space-y-2"></div>
+          </div>
         </section>
 
         <!-- ADMIN -->
-        <section id="section-admin" class="space-y-6 hidden">
-          <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h2 class="text-xl font-semibold">Admin Panel</h2>
-              <p class="text-sm text-slate-600">Approvals + Top nominations + Voting config</p>
-            </div>
-          </div>
-
-          <!-- Voting config -->
-          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 class="text-lg font-semibold mb-1">Voting Settings</h3>
-            <p class="text-xs text-slate-600 mb-3">
-              By default voting closes automatically at month end. You can override here.
-            </p>
-
-            <div class="grid sm:grid-cols-3 gap-3">
-              <div class="sm:col-span-1">
-                <label class="text-sm font-medium block mb-1">Override status</label>
-                <select id="votingOverride" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white">
-                  <option value="auto">Auto (month end)</option>
-                  <option value="open">Force Open</option>
-                  <option value="closed">Force Closed</option>
-                </select>
+        <section id="section-admin" class="hidden space-y-4">
+          <div class="bg-white rounded-3xl border p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <h2 class="text-xl font-black">Admin Panel</h2>
+                <p class="text-sm muted">Manage nominations config + approve/reject leave with comments.</p>
               </div>
+              <div class="chip bg-emerald-50 text-emerald-800">Super Admin</div>
+            </div>
 
-              <div class="sm:col-span-2">
-                <label class="text-sm font-medium block mb-1">Message (optional)</label>
-                <input id="votingMessage" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm bg-white"
-                       placeholder="e.g. Voting closed for month-end processing." />
+            <!-- Config -->
+            <div class="rounded-2xl border bg-slate-50 p-4">
+              <h3 class="text-sm font-black mb-2">Voting / Nominations Settings</h3>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="rounded-2xl bg-white border p-3">
+                  <div class="text-xs muted mb-1">Nominations Open</div>
+                  <select id="cfgOpen" class="w-full border rounded-2xl px-3 py-2 text-sm">
+                    <option value="true">Open</option>
+                    <option value="false">Closed</option>
+                  </select>
+                </div>
+                <div class="rounded-2xl bg-white border p-3">
+                  <div class="text-xs muted mb-1">Close at (date)</div>
+                  <input id="cfgCloseAt" type="date" class="w-full border rounded-2xl px-3 py-2 text-sm" />
+                </div>
+                <div class="rounded-2xl bg-white border p-3">
+                  <div class="text-xs muted mb-1">Allow Photo Upload</div>
+                  <select id="cfgPhoto" class="w-full border rounded-2xl px-3 py-2 text-sm">
+                    <option value="true">Enabled</option>
+                    <option value="false">Disabled</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-3 flex items-center gap-2">
+                <button id="saveConfigBtn" class="btn btnPrimary">Save settings</button>
+                <div id="configMsg" class="text-sm"></div>
               </div>
             </div>
 
-            <div class="mt-3 flex items-center gap-2">
-              <button id="saveVotingConfigBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-black">
-                Save config
-              </button>
-              <span id="configSavedMsg" class="text-xs text-slate-600"></span>
+            <!-- Leave approvals -->
+            <div class="rounded-2xl border p-4">
+              <h3 class="text-lg font-black mb-1">Leave Requests – Approvals</h3>
+              <p class="text-xs muted mb-3">Only admins can see all requests.</p>
+              <div id="adminLeaveList" class="space-y-2"></div>
             </div>
-          </div>
-
-          <!-- Leave approvals -->
-          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 class="text-lg font-semibold mb-1">Leave Requests – Approvals</h3>
-            <p class="text-xs text-slate-600 mb-2">Approve or reject pending requests. Rejection requires a comment.</p>
-            <div id="adminLeaveList" class="border border-slate-200 rounded-xl p-3 max-h-[360px] overflow-y-auto text-xs space-y-2"></div>
-          </div>
-
-          <!-- Top nominations -->
-          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 class="text-lg font-semibold mb-1">Top Nominations</h3>
-            <p class="text-xs text-slate-600 mb-2">Ranked by number of nominations, then guest feedback points.</p>
-            <div id="topNominationsList" class="border border-slate-200 rounded-xl p-3 max-h-[360px] overflow-y-auto text-xs"></div>
           </div>
         </section>
 
@@ -301,34 +339,49 @@
     </div>
   </div>
 
-  <!-- FIREBASE & APP LOGIC -->
+  <!-- Waves -->
+  <div class="wave-wrapper">
+    <div class="wave" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 320%22><path fill=%22%23ffffff%22 fill-opacity=%220.75%22 d=%22M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,181.3C840,203,960,245,1080,256C1200,267,1320,245,1380,234.7L1440,224L1440,320L0,320Z%22 /></svg>');"></div>
+    <div class="wave wave2" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 320%22><path fill=%22%23ffffff%22 fill-opacity=%220.45%22 d=%22M0,256L80,240C160,224,320,192,480,181.3C640,171,800,181,960,192C1120,203,1280,213,1360,218.7L1440,224L1440,320L0,320Z%22 /></svg>');"></div>
+    <div class="wave wave3" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 1440 320%22><path fill=%22%23ffffff%22 fill-opacity=%220.25%22 d=%22M0,288L120,272C240,256,480,224,720,229.3C960,235,1200,277,1320,298.7L1440,320L1440,320L0,320Z%22 /></svg>');"></div>
+  </div>
+
+  <!-- Firebase App -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
     import {
       getFirestore,
       collection,
       addDoc,
       getDocs,
-      getDoc,
       query,
       where,
       orderBy,
       serverTimestamp,
       doc,
-      updateDoc,
       setDoc,
+      getDoc,
+      updateDoc,
+      Timestamp,
       limit,
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithRedirect,
-      getRedirectResult,
-      signOut,
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // ✅ Your Firebase config (unchanged)
+    import {
+      getStorage,
+      ref,
+      uploadBytes,
+      getDownloadURL,
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    // ✅ Your Firebase config (from your earlier file)
     const firebaseConfig = {
       apiKey: "AIzaSyCX44FHUpCQY-ma62m89rx3ah6s_gJtcY4",
       authDomain: "band-portal-8225e.firebaseapp.com",
@@ -338,7 +391,7 @@
       appId: "1:975187203610:web:c044a2e0d3e2fd29b1e3a3"
     };
 
-    // ✅ Set your super admin Gmail addresses here
+    // ✅ Super Admins
     const SUPER_ADMIN_EMAILS = [
       "hamid.bashyr@gmail.com",
       "eslamhzaki7@gmail.com",
@@ -348,157 +401,200 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+    const storage = getStorage(app);
 
-    // UI refs
-    const authArea = document.getElementById("authArea");
-    const loginSection = document.getElementById("loginSection");
-    const appSection = document.getElementById("appSection");
-    const mainNav = document.getElementById("mainNav");
-    const googleSignInBtn = document.getElementById("googleSignInBtn");
-    const tabButtons = document.querySelectorAll(".tab-btn");
+    // UI
+    const qs = (id) => document.getElementById(id);
+    const loginSection = qs("loginSection");
+    const appSection = qs("appSection");
+    const mainNav = qs("mainNav");
+    const authArea = qs("authArea");
+    const tabs = document.querySelectorAll(".tab");
 
     const sections = {
-      nominate: document.getElementById("section-nominate"),
-      history: document.getElementById("section-history"),
-      leave: document.getElementById("section-leave"),
-      availability: document.getElementById("section-availability"),
-      admin: document.getElementById("section-admin"),
+      home: qs("section-home"),
+      nominate: qs("section-nominate"),
+      history: qs("section-history"),
+      leave: qs("section-leave"),
+      availability: qs("section-availability"),
+      admin: qs("section-admin"),
     };
 
-    // Nomination refs
-    const nominationForm = document.getElementById("nominationForm");
-    const nomineeNameEl = document.getElementById("nomineeName");
-    const nomineeDepartmentEl = document.getElementById("nomineeDepartment");
-    const guestFeedbackPointsEl = document.getElementById("guestFeedbackPoints");
-    const nominationMonthEl = document.getElementById("nominationMonth");
-    const nominationReasonEl = document.getElementById("nominationReason");
-    const nominationMessageEl = document.getElementById("nominationMessage");
-    const submitNominationBtn = document.getElementById("submitNominationBtn");
-    const historyList = document.getElementById("historyList");
-
-    // History filter
-    const historyMonthEl = document.getElementById("historyMonth");
-    const refreshHistoryBtn = document.getElementById("refreshHistoryBtn");
-
-    // Leave refs
-    const leaveForm = document.getElementById("leaveForm");
-    const leaveTypeEl = document.getElementById("leaveType");
-    const leaveStartEl = document.getElementById("leaveStart");
-    const leaveEndEl = document.getElementById("leaveEnd");
-    const leaveReasonEl = document.getElementById("leaveReason");
-    const leaveMessageEl = document.getElementById("leaveMessage");
-    const submitLeaveBtn = document.getElementById("submitLeaveBtn");
-    const myLeaveList = document.getElementById("myLeaveList");
-    const availabilityList = document.getElementById("availabilityList");
-    const adminLeaveList = document.getElementById("adminLeaveList");
-    const topNominationsList = document.getElementById("topNominationsList");
-
-    // Admin voting config
-    const votingStatusText = document.getElementById("votingStatusText");
-    const votingOverrideEl = document.getElementById("votingOverride");
-    const votingMessageEl = document.getElementById("votingMessage");
-    const saveVotingConfigBtn = document.getElementById("saveVotingConfigBtn");
-    const configSavedMsg = document.getElementById("configSavedMsg");
-
-    // State
     let currentUser = null;
     let isSuperAdmin = false;
-    let votingOpen = true;
-    let votingNote = "";
+    let appConfig = null;
 
-    // ---------- Helpers ----------
-    function monthKeyDefault() {
-      const now = new Date();
-      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const CONFIG_DOC = doc(db, "config", "app"); // config/app
+
+    function monthKeyFromDate(d = new Date()) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     }
 
-    function setDefaultMonths() {
-      const m = monthKeyDefault();
-      nominationMonthEl.value = m;
-      historyMonthEl.value = m;
+    function endOfMonthDate(d = new Date()) {
+      return new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59);
     }
 
-    function switchSection(key) {
-      for (const name in sections) {
-        sections[name].classList.toggle("hidden", name !== key);
-      }
-      tabButtons.forEach((btn) => {
-        if (btn.dataset.section === key) {
-          btn.classList.add("bg-slate-50", "font-semibold");
-        } else {
-          btn.classList.remove("bg-slate-50", "font-semibold");
+    function normalizeName(s) {
+      return (s || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function ratingFromCount(count) {
+      // Simple: 0->0, 1->3.5, 2->3.8, 3->4.1, 4->4.3, 5->4.5, 6->4.6, 7->4.7, 8->4.8, 9->4.9, 10+->5.0
+      if (!count) return 0.0;
+      const table = [0, 3.5, 3.8, 4.1, 4.3, 4.5, 4.6, 4.7, 4.8, 4.9];
+      return count >= 10 ? 5.0 : table[count];
+    }
+
+    function setTabActive(key) {
+      tabs.forEach(t => t.classList.toggle("active", t.dataset.section === key));
+      for (const k in sections) sections[k].classList.toggle("hidden", k !== key);
+    }
+
+    tabs.forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const key = btn.dataset.section;
+        setTabActive(key);
+        if (key === "home") await loadTopNominations(monthKeyFromDate());
+        if (key === "history") await loadHistory();
+        if (key === "leave") await loadMyLeaveRequests();
+        if (key === "availability" && isSuperAdmin) await loadAvailability();
+        if (key === "admin" && isSuperAdmin) {
+          await loadConfig();
+          await loadAllLeaveRequests();
         }
       });
-    }
-
-    function endOfMonthClosed(monthKey) {
-      // If monthKey is current month, voting is open until last day 23:59:59
-      const [y, m] = monthKey.split("-").map(Number);
-      const now = new Date();
-
-      const lastDay = new Date(y, m, 0, 23, 59, 59, 999); // month is 1-based in our key
-      return now > lastDay;
-    }
-
-    async function loadVotingConfig() {
-      // Doc: config/voting
-      const ref = doc(db, "config", "voting");
-      const snap = await getDoc(ref);
-
-      // Defaults
-      let override = "auto";
-      let message = "";
-
-      if (snap.exists()) {
-        const d = snap.data();
-        override = d.override || "auto";
-        message = d.message || "";
-      }
-
-      votingNote = message;
-
-      const currentMonth = monthKeyDefault();
-      const autoClosed = endOfMonthClosed(currentMonth);
-
-      if (override === "open") votingOpen = true;
-      else if (override === "closed") votingOpen = false;
-      else votingOpen = !autoClosed;
-
-      votingStatusText.textContent = votingOpen ? "OPEN" : "CLOSED";
-      votingStatusText.className = votingOpen ? "font-semibold text-emerald-700" : "font-semibold text-red-700";
-
-      // If admin, reflect config UI
-      if (isSuperAdmin && votingOverrideEl) {
-        votingOverrideEl.value = override;
-        votingMessageEl.value = message;
-      }
-
-      // Disable nomination button when closed
-      submitNominationBtn.disabled = !votingOpen;
-      if (!votingOpen && message) {
-        nominationMessageEl.textContent = message;
-        nominationMessageEl.className = "text-sm text-red-600";
-      } else if (!votingOpen) {
-        nominationMessageEl.textContent = "Voting is closed for this month.";
-        nominationMessageEl.className = "text-sm text-red-600";
-      } else {
-        nominationMessageEl.textContent = "";
-      }
-    }
-
-    // ---------- AUTH (Redirect, reliable on GitHub Pages) ----------
-    googleSignInBtn.addEventListener("click", () => {
-      signInWithRedirect(auth, provider);
     });
 
-    // handle redirect result
-    getRedirectResult(auth).catch((err) => {
-      console.error("Redirect error:", err);
-      alert("Login failed: " + err.message);
+    qs("googleSignInBtn").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, provider);
+      } catch (err) {
+        alert("Login failed: " + err.message);
+      }
     });
 
     async function handleSignOut() {
       await signOut(auth);
+    }
+
+    // Ensure config exists
+    async function ensureConfig() {
+      const snap = await getDoc(CONFIG_DOC);
+      if (snap.exists()) return snap.data();
+
+      const now = new Date();
+      const defaultClose = endOfMonthDate(now);
+      const data = {
+        nominationsOpen: true,
+        closeAt: Timestamp.fromDate(defaultClose),
+        allowPhotoUpload: true,
+        updatedAt: serverTimestamp(),
+      };
+      await setDoc(CONFIG_DOC, data, { merge: true });
+      return data;
+    }
+
+    async function loadConfig() {
+      appConfig = await ensureConfig();
+      // admin UI
+      if (isSuperAdmin) {
+        qs("cfgOpen").value = String(!!appConfig.nominationsOpen);
+        const closeAtDate = appConfig.closeAt?.toDate ? appConfig.closeAt.toDate() : endOfMonthDate(new Date());
+        qs("cfgCloseAt").value = `${closeAtDate.getFullYear()}-${String(closeAtDate.getMonth()+1).padStart(2,"0")}-${String(closeAtDate.getDate()).padStart(2,"0")}`;
+        qs("cfgPhoto").value = String(!!appConfig.allowPhotoUpload);
+      }
+
+      // home UI
+      const now = new Date();
+      const closeAt = appConfig.closeAt?.toDate ? appConfig.closeAt.toDate() : endOfMonthDate(now);
+      const open = !!appConfig.nominationsOpen && now <= closeAt;
+      qs("nominationsOpenText").textContent = open ? "Open ✅" : "Closed ❌";
+      qs("closingDateText").textContent = closeAt.toDateString();
+      qs("currentMonthText").textContent = monthKeyFromDate(now);
+
+      // nomination UI
+      qs("nomMonthBadge").textContent = monthKeyFromDate(now);
+      const closed = !open;
+      qs("nominationClosedBanner").classList.toggle("hidden", !closed);
+      qs("submitNominationBtn").disabled = closed;
+      qs("submitNominationBtn").classList.toggle("opacity-60", closed);
+
+      // photo upload allowed
+      const canUpload = !!appConfig.allowPhotoUpload;
+      qs("photoInput").disabled = !canUpload;
+    }
+
+    async function ensureUserProfile(user) {
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+
+      const base = {
+        uid: user.uid,
+        email: user.email || "",
+        displayName: user.displayName || "",
+        photoURL: user.photoURL || "",
+        role: SUPER_ADMIN_EMAILS.includes(user.email) ? "admin" : "staff",
+        updatedAt: serverTimestamp(),
+      };
+
+      if (!snap.exists()) {
+        await setDoc(userRef, { ...base, createdAt: serverTimestamp() }, { merge: true });
+      } else {
+        await setDoc(userRef, base, { merge: true });
+      }
+
+      return userRef;
+    }
+
+    async function getUserProfile(uid) {
+      const snap = await getDoc(doc(db, "users", uid));
+      return snap.exists() ? snap.data() : null;
+    }
+
+    async function updateStarsForUser(uid, monthKey) {
+      // Stars for staff based on number of nominations received in current month
+      // We'll compute nominations where nomineeName matches profile displayName (best effort)
+      const profile = await getUserProfile(uid);
+      if (!profile) return;
+
+      const displayName = normalizeName(profile.displayName);
+      if (!displayName) return;
+
+      const qNom = query(
+        collection(db, "nominations"),
+        where("monthKey", "==", monthKey),
+        where("nomineeNameNorm", "==", displayName)
+      );
+
+      const snap = await getDocs(qNom);
+      const count = snap.size;
+      const rating = ratingFromCount(count);
+
+      await setDoc(doc(db, "users", uid), { stars: rating, nominationsCount: count }, { merge: true });
+    }
+
+    function renderAuthUI(user, profile) {
+      const role = isSuperAdmin ? "Super Admin" : "Staff";
+      qs("profileName").textContent = profile?.displayName || user.displayName || "Logged in";
+      qs("profileEmail").textContent = profile?.email || user.email || "";
+      qs("roleChip").textContent = role;
+      qs("roleChip").className = `chip ${isSuperAdmin ? "bg-emerald-50 text-emerald-800" : "bg-slate-50 text-slate-700"}`;
+
+      const stars = Number(profile?.stars || 0).toFixed(1);
+      qs("starsChip").textContent = `⭐ ${stars}`;
+
+      const imgSrc = profile?.customPhotoURL || profile?.photoURL || user.photoURL || "https://via.placeholder.com/80";
+      qs("profileImg").src = imgSrc;
+
+      authArea.innerHTML = `
+        <div class="text-right text-xs text-slate-700">
+          <div class="font-black">${user.displayName || "Logged in"}</div>
+          <div class="muted">${user.email || ""}</div>
+          <button id="logoutBtnTop" class="mt-2 btn btnGhost">Sign out</button>
+        </div>
+      `;
+      qs("logoutBtnTop").addEventListener("click", handleSignOut);
+      qs("logoutBtn").addEventListener("click", handleSignOut);
     }
 
     onAuthStateChanged(auth, async (user) => {
@@ -513,157 +609,131 @@
         return;
       }
 
-      authArea.innerHTML = `
-        <div class="text-xs text-slate-700">
-          <div class="font-semibold">${user.displayName || "Logged in"}</div>
-          <div>${user.email || ""}</div>
-          <div class="mt-1">
-            <span class="inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] ${
-              isSuperAdmin ? "border-emerald-300 text-emerald-700 bg-emerald-50" : "border-slate-200 text-slate-600 bg-white"
-            }">
-              ${isSuperAdmin ? "Super Admin" : "Staff"}
-            </span>
-          </div>
-          <button id="logoutBtn" class="mt-2 inline-flex text-[11px] text-slate-900 border border-slate-200 rounded-full px-2 py-0.5 hover:bg-slate-50">
-            Sign out
-          </button>
-        </div>
-      `;
-      document.getElementById("logoutBtn").addEventListener("click", handleSignOut);
-
       loginSection.classList.add("hidden");
       appSection.classList.remove("hidden");
       mainNav.classList.remove("hidden");
 
-      // Show/hide admin-only tabs
-      document.querySelectorAll("[data-admin-only='true']").forEach((el) => {
+      // admin only tabs
+      document.querySelectorAll("[data-admin-only='true']").forEach(el => {
         el.classList.toggle("hidden", !isSuperAdmin);
       });
+      sections.availability.classList.toggle("hidden", !isSuperAdmin);
+      sections.admin.classList.toggle("hidden", !isSuperAdmin);
 
-      // default month values
-      setDefaultMonths();
-      switchSection("nominate");
+      // Ensure config + profile
+      await loadConfig();
+      const userRef = await ensureUserProfile(user);
+      const profile = await getUserProfile(user.uid);
 
-      // Load config & data
-      await loadVotingConfig();
-      await loadHistory(historyMonthEl.value);
+      // Compute stars for user based on nominations received this month (best effort by displayName)
+      await updateStarsForUser(user.uid, monthKeyFromDate());
+
+      const profile2 = await getUserProfile(user.uid);
+      renderAuthUI(user, profile2);
+
+      // default tab
+      setTabActive("home");
+      qs("nominationMonth").value = monthKeyFromDate();
+      qs("historyMonth").value = monthKeyFromDate();
+      await loadTopNominations(monthKeyFromDate());
       await loadMyLeaveRequests();
-
       if (isSuperAdmin) {
-        await loadAvailability();
         await loadAllLeaveRequests();
-        await loadTopNominations();
+        await loadAvailability();
       }
     });
 
-    // Tabs
-    tabButtons.forEach((btn) => {
-      btn.addEventListener("click", async () => {
-        const section = btn.dataset.section;
-        switchSection(section);
+    // Photo upload
+    qs("photoInput").addEventListener("change", async (e) => {
+      try {
+        if (!currentUser) return;
+        if (!appConfig?.allowPhotoUpload) {
+          alert("Photo upload is disabled by admin.");
+          return;
+        }
 
-        if (section === "nominate") {
-          await loadVotingConfig();
-        }
-        if (section === "history") {
-          await loadHistory(historyMonthEl.value);
-        }
-        if (section === "leave") {
-          await loadMyLeaveRequests();
-        }
-        if (section === "availability" && isSuperAdmin) {
-          await loadAvailability();
-        }
-        if (section === "admin" && isSuperAdmin) {
-          await loadVotingConfig();
-          await loadAllLeaveRequests();
-          await loadTopNominations();
-        }
-      });
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const path = `profilePhotos/${currentUser.uid}/profile.jpg`;
+        const r = ref(storage, path);
+        await uploadBytes(r, file);
+        const url = await getDownloadURL(r);
+
+        await setDoc(doc(db, "users", currentUser.uid), { customPhotoURL: url, updatedAt: serverTimestamp() }, { merge: true });
+        const profile = await getUserProfile(currentUser.uid);
+        qs("profileImg").src = profile.customPhotoURL || profile.photoURL || currentUser.photoURL;
+        alert("Profile photo updated ✅");
+      } catch (err) {
+        console.error(err);
+        alert("Upload failed: " + err.message);
+      } finally {
+        qs("photoInput").value = "";
+      }
     });
 
-    // ---------- Admin: save voting config ----------
-    if (saveVotingConfigBtn) {
-      saveVotingConfigBtn.addEventListener("click", async () => {
-        if (!isSuperAdmin) return;
-        configSavedMsg.textContent = "Saving...";
-        try {
-          await setDoc(doc(db, "config", "voting"), {
-            override: votingOverrideEl.value,
-            message: votingMessageEl.value.trim(),
-            updatedAt: serverTimestamp(),
-            updatedBy: currentUser?.email || "",
-          }, { merge: true });
+    // -------- Nominations --------
+    const nominationForm = qs("nominationForm");
+    const nominationMessageEl = qs("nominationMessage");
 
-          configSavedMsg.textContent = "Saved ✅";
-          setTimeout(() => (configSavedMsg.textContent = ""), 2000);
-          await loadVotingConfig();
-        } catch (e) {
-          console.error(e);
-          configSavedMsg.textContent = "Save failed ❌";
-        }
-      });
+    function nominationsOpenNow() {
+      const now = new Date();
+      const closeAt = appConfig?.closeAt?.toDate ? appConfig.closeAt.toDate() : endOfMonthDate(now);
+      const open = !!appConfig?.nominationsOpen && now <= closeAt;
+      return open;
     }
 
-    // ---------- NOMINATIONS ----------
-    function normalizeName(s) {
-      return (s || "").trim().toLowerCase().replace(/\s+/g, " ");
+    async function checkDuplicateNomination({ nomineeNameNorm, monthKey }) {
+      const qDup = query(
+        collection(db, "nominations"),
+        where("monthKey", "==", monthKey),
+        where("createdByUid", "==", currentUser.uid),
+        where("nomineeNameNorm", "==", nomineeNameNorm),
+        limit(1)
+      );
+      const snap = await getDocs(qDup);
+      return !snap.empty;
     }
 
     nominationForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (!currentUser) {
-        alert("Please log in first.");
+      if (!currentUser) return;
+
+      if (!nominationsOpenNow()) {
+        nominationMessageEl.textContent = "Nominations are closed.";
+        nominationMessageEl.className = "text-sm text-rose-700";
         return;
       }
 
-      const nomineeName = nomineeNameEl.value.trim();
-      const nomineeDepartment = nomineeDepartmentEl.value.trim();
-      const guestFeedbackPoints = Number(guestFeedbackPointsEl.value || "0");
-      const monthKey = nominationMonthEl.value || monthKeyDefault();
-      const reason = nominationReasonEl.value.trim();
+      const nomineeName = qs("nomineeName").value.trim();
+      const nomineeDept = qs("nomineeDept").value.trim();
+      const guestFeedbackPoints = Number(qs("guestPoints").value || "0");
+      const monthKey = qs("nominationMonth").value || monthKeyFromDate();
+      const reason = qs("nominationReason").value.trim();
 
-      if (!votingOpen) {
-        nominationMessageEl.textContent = votingNote || "Voting is closed for this month.";
-        nominationMessageEl.className = "text-sm text-red-600";
+      if (!nomineeName || !nomineeDept || !reason) {
+        nominationMessageEl.textContent = "Please fill all fields.";
+        nominationMessageEl.className = "text-sm text-rose-700";
         return;
       }
 
-      if (!nomineeName || !nomineeDepartment || !reason) {
-        nominationMessageEl.textContent = "Please fill all required fields.";
-        nominationMessageEl.className = "text-sm text-red-600";
+      const nomineeNameNorm = normalizeName(nomineeName);
+
+      // Stop duplicates
+      const isDup = await checkDuplicateNomination({ nomineeNameNorm, monthKey });
+      if (isDup) {
+        nominationMessageEl.textContent = "Duplicate blocked: You already nominated this person for this month.";
+        nominationMessageEl.className = "text-sm text-rose-700";
         return;
       }
 
-      // Duplicate protection: one nomination per nominee per user per month
-      // (We query nominations where createdByUid + monthKey + nomineeNameKey)
-      const nomineeNameKey = normalizeName(nomineeName);
-
-      submitNominationBtn.disabled = true;
-      nominationMessageEl.textContent = "Submitting...";
-      nominationMessageEl.className = "text-sm text-slate-600";
+      qs("submitNominationBtn").disabled = true;
 
       try {
-        const qDup = query(
-          collection(db, "nominations"),
-          where("createdByUid", "==", currentUser.uid),
-          where("monthKey", "==", monthKey),
-          where("nomineeNameKey", "==", nomineeNameKey),
-          limit(1)
-        );
-        const dupSnap = await getDocs(qDup);
-
-        if (!dupSnap.empty) {
-          nominationMessageEl.textContent = "You already nominated this person for this month.";
-          nominationMessageEl.className = "text-sm text-amber-700";
-          submitNominationBtn.disabled = false;
-          return;
-        }
-
         await addDoc(collection(db, "nominations"), {
           nomineeName,
-          nomineeNameKey,
-          nomineeDepartment,
+          nomineeNameNorm,
+          nomineeDepartment: nomineeDept,
           guestFeedbackPoints,
           monthKey,
           reason,
@@ -673,113 +743,155 @@
           createdAt: serverTimestamp(),
         });
 
-        nominationMessageEl.textContent = "Thank you! Your nomination has been submitted.";
+        nominationMessageEl.textContent = "Nomination submitted ✅";
         nominationMessageEl.className = "text-sm text-emerald-700";
-        nominationForm.reset();
-        setDefaultMonths();
 
-        await loadHistory(historyMonthEl.value);
-        if (isSuperAdmin) await loadTopNominations();
+        nominationForm.reset();
+        qs("nominationMonth").value = monthKeyFromDate();
+        qs("nomMonthBadge").textContent = monthKeyFromDate();
+        await loadTopNominations(monthKeyFromDate());
+
       } catch (err) {
         console.error(err);
-        nominationMessageEl.textContent = "Something went wrong, please try again.";
-        nominationMessageEl.className = "text-sm text-red-600";
+        nominationMessageEl.textContent = "Failed to submit. Try again.";
+        nominationMessageEl.className = "text-sm text-rose-700";
       } finally {
-        submitNominationBtn.disabled = !votingOpen;
+        qs("submitNominationBtn").disabled = false;
       }
     });
 
-    // History filter apply
-    refreshHistoryBtn.addEventListener("click", async () => {
-      await loadHistory(historyMonthEl.value);
-    });
+    // History by month
+    qs("historyLoadBtn").addEventListener("click", loadHistory);
 
-    async function loadHistory(monthKey) {
-      historyList.innerHTML = '<div class="text-slate-400 text-xs">Loading nominations...</div>';
+    async function loadHistory() {
+      const monthKey = qs("historyMonth").value || monthKeyFromDate();
+      qs("historyList").innerHTML = `<div class="text-sm muted">Loading…</div>`;
 
       try {
-        let qNom;
-        if (monthKey) {
-          qNom = query(
-            collection(db, "nominations"),
-            where("monthKey", "==", monthKey),
-            orderBy("createdAt", "desc")
-          );
-        } else {
-          qNom = query(collection(db, "nominations"), orderBy("createdAt", "desc"));
-        }
-
-        const snap = await getDocs(qNom);
+        const qH = query(
+          collection(db, "nominations"),
+          where("monthKey", "==", monthKey),
+          orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(qH);
 
         if (snap.empty) {
-          historyList.innerHTML = '<div class="text-slate-400 text-xs">No nominations found for this month.</div>';
+          qs("historyList").innerHTML = `<div class="text-sm muted">No nominations for ${monthKey}.</div>`;
           return;
         }
 
-        const items = [];
-        snap.forEach((docSnap) => items.push(docSnap.data()));
-
-        historyList.innerHTML = "";
-        items.forEach((d) => {
-          const createdAtDate = d.createdAt?.toDate ? d.createdAt.toDate() : null;
-          const dateStr = createdAtDate ? createdAtDate.toLocaleString() : "(date pending)";
-
-          const div = document.createElement("div");
-          div.className = "border border-slate-200 rounded-xl p-3 bg-white";
-          div.innerHTML = `
-            <div class="flex justify-between gap-3">
-              <div>
-                <div class="font-semibold text-sm text-slate-900">${d.nomineeName || ""}</div>
-                <div class="text-[11px] text-slate-600">${d.nomineeDepartment || ""}</div>
-              </div>
-              <div class="text-[11px] text-right">
-                <div class="text-amber-700">
-                  Guest points: <span class="font-semibold">${d.guestFeedbackPoints || 0}</span>
+        const html = [];
+        snap.forEach((d) => {
+          const n = d.data();
+          html.push(`
+            <div class="bg-white rounded-2xl border p-3">
+              <div class="flex justify-between gap-3">
+                <div>
+                  <div class="text-sm font-black">${n.nomineeName}</div>
+                  <div class="text-xs muted">${n.nomineeDepartment}</div>
                 </div>
-                ${d.monthKey ? `<div class="text-slate-500">Month: ${d.monthKey}</div>` : ""}
+                <div class="text-right">
+                  <div class="chip bg-amber-50 text-amber-800">Points: <b>${n.guestFeedbackPoints || 0}</b></div>
+                  <div class="text-[11px] muted mt-1">${n.monthKey}</div>
+                </div>
               </div>
+              <div class="mt-2 text-sm text-slate-800 whitespace-pre-line">${n.reason || ""}</div>
+              <div class="mt-2 text-[11px] muted">By: ${n.createdByName || ""} (${n.createdByEmail || ""})</div>
             </div>
-            <div class="mt-2 text-xs text-slate-700 whitespace-pre-line">${(d.reason || "").replaceAll("<","&lt;")}</div>
-            <div class="mt-2 flex justify-between text-[11px] text-slate-500">
-              <span>By: ${d.createdByName || ""} (${d.createdByEmail || ""})</span>
-              <span>${dateStr}</span>
-            </div>
-          `;
-          historyList.appendChild(div);
+          `);
         });
+
+        qs("historyList").innerHTML = html.join("");
       } catch (err) {
         console.error(err);
-        historyList.innerHTML = '<div class="text-red-500 text-xs">Failed to load nominations.</div>';
+        qs("historyList").innerHTML = `<div class="text-sm text-rose-700">Failed to load history.</div>`;
       }
     }
 
-    // ---------- LEAVE REQUESTS ----------
-    leaveForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!currentUser) {
-        alert("Please log in first.");
-        return;
+    // Leaderboard / Top nominations (month)
+    qs("refreshTopBtn").addEventListener("click", async () => loadTopNominations(monthKeyFromDate()));
+
+    async function loadTopNominations(monthKey) {
+      qs("topList").innerHTML = `<div class="text-sm muted">Loading…</div>`;
+
+      try {
+        const qN = query(
+          collection(db, "nominations"),
+          where("monthKey", "==", monthKey)
+        );
+        const snap = await getDocs(qN);
+
+        if (snap.empty) {
+          qs("topList").innerHTML = `<div class="text-sm muted">No nominations yet this month.</div>`;
+          return;
+        }
+
+        const map = new Map();
+        snap.forEach((docSnap) => {
+          const d = docSnap.data();
+          const key = `${normalizeName(d.nomineeName)}||${normalizeName(d.nomineeDepartment)}`;
+          const cur = map.get(key) || { nomineeName: d.nomineeName, dept: d.nomineeDepartment, count: 0, points: 0 };
+          cur.count += 1;
+          cur.points += Number(d.guestFeedbackPoints || 0);
+          map.set(key, cur);
+        });
+
+        const rows = Array.from(map.values());
+        rows.sort((a,b) => (b.count - a.count) || (b.points - a.points));
+
+        const html = rows.slice(0, 10).map((r, i) => {
+          const stars = ratingFromCount(r.count).toFixed(1);
+          return `
+            <div class="bg-white rounded-2xl border p-3 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-sky-50 border flex items-center justify-center font-black">#${i+1}</div>
+                <div>
+                  <div class="text-sm font-black">${r.nomineeName}</div>
+                  <div class="text-xs muted">${r.dept}</div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="chip bg-emerald-50 text-emerald-800">Noms: <b>${r.count}</b></div>
+                <div class="chip bg-amber-50 text-amber-800 mt-1">⭐ ${stars} • Points: <b>${r.points}</b></div>
+              </div>
+            </div>
+          `;
+        });
+
+        qs("topList").innerHTML = html.join("");
+      } catch (err) {
+        console.error(err);
+        qs("topList").innerHTML = `<div class="text-sm text-rose-700">Failed to load leaderboard.</div>`;
       }
+    }
 
-      const type = leaveTypeEl.value;
-      const startDate = leaveStartEl.value;
-      const endDate = leaveEndEl.value;
-      const reason = leaveReasonEl.value.trim();
+    // -------- Leave Requests --------
+    qs("leaveForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentUser) return;
 
-      if (!startDate || !endDate || !reason) {
-        leaveMessageEl.textContent = "Please fill start date, end date and reason.";
-        leaveMessageEl.className = "text-sm text-red-600";
+      const type = qs("leaveType").value;
+      const startDate = qs("leaveStart").value;
+      const endDate = qs("leaveEnd").value;
+      const reason = (qs("leaveReason").value || "").trim();
+
+      if (!startDate || !endDate) {
+        qs("leaveMessage").textContent = "Please select start and end dates.";
+        qs("leaveMessage").className = "text-sm text-rose-700";
         return;
       }
       if (endDate < startDate) {
-        leaveMessageEl.textContent = "End date cannot be before start date.";
-        leaveMessageEl.className = "text-sm text-red-600";
+        qs("leaveMessage").textContent = "End date cannot be before start date.";
+        qs("leaveMessage").className = "text-sm text-rose-700";
+        return;
+      }
+      if (!reason) {
+        qs("leaveMessage").textContent = "Please enter a reason.";
+        qs("leaveMessage").className = "text-sm text-rose-700";
         return;
       }
 
-      submitLeaveBtn.disabled = true;
-      leaveMessageEl.textContent = "Submitting...";
-      leaveMessageEl.className = "text-sm text-slate-600";
+      qs("submitLeaveBtn").disabled = true;
 
       try {
         await addDoc(collection(db, "leaveRequests"), {
@@ -791,28 +903,31 @@
           endDate,
           reason,
           status: "pending",
-          rejectionComment: "",
           createdAt: serverTimestamp(),
         });
 
-        leaveMessageEl.textContent = "Your leave request has been submitted.";
-        leaveMessageEl.className = "text-sm text-emerald-700";
-        leaveForm.reset();
+        qs("leaveMessage").textContent = "Leave request submitted ✅";
+        qs("leaveMessage").className = "text-sm text-emerald-700";
+        qs("leaveForm").reset();
+
         await loadMyLeaveRequests();
-        if (isSuperAdmin) await loadAvailability();
+        if (isSuperAdmin) {
+          await loadAllLeaveRequests();
+          await loadAvailability();
+        }
       } catch (err) {
         console.error(err);
-        leaveMessageEl.textContent = "Something went wrong while submitting your request.";
-        leaveMessageEl.className = "text-sm text-red-600";
+        qs("leaveMessage").textContent = "Failed to submit leave request.";
+        qs("leaveMessage").className = "text-sm text-rose-700";
       } finally {
-        submitLeaveBtn.disabled = false;
+        qs("submitLeaveBtn").disabled = false;
       }
     });
 
     async function loadMyLeaveRequests() {
       if (!currentUser) return;
 
-      myLeaveList.innerHTML = '<div class="text-slate-400">Loading your requests...</div>';
+      qs("myLeaveList").innerHTML = `<div class="text-sm muted">Loading…</div>`;
 
       try {
         const qMy = query(
@@ -822,83 +937,38 @@
         const snap = await getDocs(qMy);
 
         if (snap.empty) {
-          myLeaveList.innerHTML = '<div class="text-slate-400">No leave requests yet.</div>';
+          qs("myLeaveList").innerHTML = `<div class="text-sm muted">No leave requests yet.</div>`;
           return;
         }
 
         const rows = [];
-        snap.forEach((docSnap) => rows.push(docSnap.data()));
-        rows.sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
+        snap.forEach((d) => rows.push({ id: d.id, ...d.data() }));
+        rows.sort((a,b) => (a.startDate || "").localeCompare(b.startDate || ""));
 
-        myLeaveList.innerHTML = "";
-        rows.forEach((r) => {
+        qs("myLeaveList").innerHTML = rows.map(r => {
           const statusClass =
-            r.status === "approved"
-              ? "text-emerald-700"
-              : r.status === "rejected"
-              ? "text-red-700"
-              : "text-amber-700";
+            r.status === "approved" ? "text-emerald-700" :
+            r.status === "rejected" ? "text-rose-700" : "text-amber-700";
 
-          const div = document.createElement("div");
-          div.className = "border border-slate-200 rounded-xl px-3 py-2 bg-white";
-          div.innerHTML = `
-            <div class="flex justify-between items-start gap-2">
-              <div>
-                <div class="font-semibold text-xs uppercase text-slate-800">${r.type}</div>
-                <div class="text-[11px] text-slate-600">${r.startDate} → ${r.endDate}</div>
-                <div class="text-[11px] text-slate-600 mt-1"><span class="font-semibold">Reason:</span> ${r.reason || "-"}</div>
-                ${r.status === "rejected" && r.rejectionComment ? `
-                  <div class="text-[11px] text-red-700 mt-1"><span class="font-semibold">Comment:</span> ${r.rejectionComment}</div>
-                ` : ``}
-              </div>
-              <div class="text-[11px] font-semibold ${statusClass}">
-                ${r.status}
+          return `
+            <div class="bg-white rounded-2xl border p-3">
+              <div class="flex justify-between items-start gap-3">
+                <div>
+                  <div class="text-sm font-black uppercase">${r.type}</div>
+                  <div class="text-xs muted">${r.startDate} → ${r.endDate}</div>
+                  <div class="text-xs mt-1"><span class="muted">Reason:</span> ${r.reason || "-"}</div>
+                  ${r.status === "rejected" && r.rejectionReason ? `
+                    <div class="text-xs mt-1 text-rose-700"><b>Rejected comment:</b> ${r.rejectionReason}</div>
+                  ` : ""}
+                </div>
+                <div class="chip bg-slate-50 ${statusClass}"><b>${r.status}</b></div>
               </div>
             </div>
           `;
-          myLeaveList.appendChild(div);
-        });
+        }).join("");
       } catch (err) {
         console.error(err);
-        myLeaveList.innerHTML = '<div class="text-red-500">Failed to load your requests.</div>';
-      }
-    }
-
-    // Availability (approved)
-    async function loadAvailability() {
-      if (!isSuperAdmin) return;
-
-      availabilityList.innerHTML = '<div class="text-slate-400">Loading approved leave...</div>';
-
-      try {
-        const qAll = query(collection(db, "leaveRequests"), where("status", "==", "approved"));
-        const snap = await getDocs(qAll);
-
-        if (snap.empty) {
-          availabilityList.innerHTML = '<div class="text-slate-400">No approved leave yet.</div>';
-          return;
-        }
-
-        const rows = [];
-        snap.forEach((docSnap) => rows.push(docSnap.data()));
-        rows.sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
-
-        availabilityList.innerHTML = "";
-        rows.forEach((r) => {
-          const div = document.createElement("div");
-          div.className = "border border-slate-200 rounded-xl px-3 py-2 bg-white";
-          div.innerHTML = `
-            <div class="flex justify-between">
-              <div class="text-xs font-semibold text-slate-900">${r.userName || r.userEmail}</div>
-              <div class="text-[11px] uppercase text-slate-600">${r.type}</div>
-            </div>
-            <div class="text-[11px] text-slate-600">${r.startDate} → ${r.endDate}</div>
-          `;
-          availabilityList.appendChild(div);
-        });
-      } catch (err) {
-        console.error(err);
-        availabilityList.innerHTML = '<div class="text-red-500 text-xs">Failed to load availability.</div>';
+        qs("myLeaveList").innerHTML = `<div class="text-sm text-rose-700">Failed to load your leave.</div>`;
       }
     }
 
@@ -906,179 +976,160 @@
     async function loadAllLeaveRequests() {
       if (!isSuperAdmin) return;
 
-      adminLeaveList.innerHTML = '<div class="text-slate-400">Loading leave requests...</div>';
+      qs("adminLeaveList").innerHTML = `<div class="text-sm muted">Loading…</div>`;
 
       try {
         const qAll = query(collection(db, "leaveRequests"), orderBy("createdAt", "desc"));
         const snap = await getDocs(qAll);
 
         if (snap.empty) {
-          adminLeaveList.innerHTML = '<div class="text-slate-400">No leave requests yet.</div>';
+          qs("adminLeaveList").innerHTML = `<div class="text-sm muted">No requests yet.</div>`;
           return;
         }
 
         const rows = [];
-        snap.forEach((docSnap) => rows.push({ id: docSnap.id, ...docSnap.data() }));
+        snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
 
-        adminLeaveList.innerHTML = "";
-        rows.forEach((r) => {
+        qs("adminLeaveList").innerHTML = rows.map(r => {
           const statusClass =
-            r.status === "approved"
-              ? "text-emerald-700"
-              : r.status === "rejected"
-              ? "text-red-700"
-              : "text-amber-700";
+            r.status === "approved" ? "text-emerald-700" :
+            r.status === "rejected" ? "text-rose-700" : "text-amber-700";
 
-          const div = document.createElement("div");
-          div.className = "border border-slate-200 rounded-xl px-3 py-2 bg-white";
-          div.innerHTML = `
-            <div class="flex justify-between items-start gap-3">
-              <div>
-                <div class="text-xs font-semibold text-slate-900">${r.userName || r.userEmail}</div>
-                <div class="text-[11px] text-slate-600">${(r.type || "").toUpperCase()} • ${r.startDate} → ${r.endDate}</div>
-                <div class="text-[11px] text-slate-600 mt-1"><span class="font-semibold">Reason:</span> ${r.reason || "-"}</div>
-                ${r.status === "rejected" && r.rejectionComment ? `<div class="text-[11px] text-red-700 mt-1"><span class="font-semibold">Comment:</span> ${r.rejectionComment}</div>` : ""}
-              </div>
+          const actions = r.status === "pending" ? `
+            <div class="flex gap-2">
+              <button class="btn btnPrimary py-2 px-3" data-act="approve" data-id="${r.id}">Approve</button>
+              <button class="btn btnGhost py-2 px-3" data-act="reject" data-id="${r.id}">Reject</button>
+            </div>
+          ` : "";
 
-              <div class="flex flex-col items-end gap-2">
-                <span class="text-[11px] font-semibold ${statusClass}">${r.status}</span>
-
-                ${
-                  r.status === "pending"
-                    ? `
-                    <div class="flex items-center gap-2">
-                      <button class="px-2 py-1 text-[11px] rounded-full bg-emerald-600 text-white hover:bg-emerald-700" data-action="approve">
-                        Approve
-                      </button>
-                      <button class="px-2 py-1 text-[11px] rounded-full bg-red-600 text-white hover:bg-red-700" data-action="reject">
-                        Reject
-                      </button>
-                    </div>
-                    <input class="mt-1 w-56 border border-slate-200 rounded-lg px-2 py-1 text-[11px]" placeholder="Rejection comment (required to reject)" data-reject-comment />
-                    `
-                    : ""
-                }
+          return `
+            <div class="bg-white rounded-2xl border p-3">
+              <div class="flex justify-between gap-3">
+                <div>
+                  <div class="text-sm font-black">${r.userName || r.userEmail}</div>
+                  <div class="text-xs muted">${(r.type || "").toUpperCase()} • ${r.startDate} → ${r.endDate}</div>
+                  <div class="text-xs mt-1"><span class="muted">Reason:</span> ${r.reason || "-"}</div>
+                  ${r.status === "rejected" && r.rejectionReason ? `<div class="text-xs text-rose-700 mt-1"><b>Comment:</b> ${r.rejectionReason}</div>` : ""}
+                </div>
+                <div class="text-right">
+                  <div class="chip bg-slate-50 ${statusClass}"><b>${r.status}</b></div>
+                  <div class="mt-2">${actions}</div>
+                </div>
               </div>
             </div>
           `;
+        }).join("");
 
-          const approveBtn = div.querySelector("[data-action='approve']");
-          const rejectBtn = div.querySelector("[data-action='reject']");
-          const rejectCommentInput = div.querySelector("[data-reject-comment]");
+        // Bind action buttons
+        qs("adminLeaveList").querySelectorAll("button[data-act]").forEach(btn => {
+          const id = btn.dataset.id;
+          const act = btn.dataset.act;
 
-          if (approveBtn) {
-            approveBtn.addEventListener("click", () => updateLeaveStatus(r.id, "approved", ""));
-          }
-          if (rejectBtn) {
-            rejectBtn.addEventListener("click", async () => {
-              const comment = (rejectCommentInput?.value || "").trim();
-              if (!comment) {
-                alert("Please enter a rejection comment.");
+          btn.addEventListener("click", async () => {
+            if (act === "approve") {
+              await updateDoc(doc(db, "leaveRequests", id), {
+                status: "approved",
+                rejectionReason: "",
+                reviewedBy: currentUser?.email || "",
+                reviewedAt: serverTimestamp(),
+              });
+              await loadAllLeaveRequests();
+              await loadAvailability();
+              await loadMyLeaveRequests();
+            } else {
+              const comment = prompt("Rejection comment (required, will be emailed):");
+              if (!comment || !comment.trim()) {
+                alert("Rejection comment is required.");
                 return;
               }
-              await updateLeaveStatus(r.id, "rejected", comment);
-            });
-          }
-
-          adminLeaveList.appendChild(div);
+              await updateDoc(doc(db, "leaveRequests", id), {
+                status: "rejected",
+                rejectionReason: comment.trim(),
+                reviewedBy: currentUser?.email || "",
+                reviewedAt: serverTimestamp(),
+              });
+              await loadAllLeaveRequests();
+              await loadAvailability();
+              await loadMyLeaveRequests();
+            }
+          });
         });
+
       } catch (err) {
         console.error(err);
-        adminLeaveList.innerHTML = '<div class="text-red-500 text-xs">Failed to load leave requests.</div>';
+        qs("adminLeaveList").innerHTML = `<div class="text-sm text-rose-700">Failed to load admin requests.</div>`;
       }
     }
 
-    async function updateLeaveStatus(id, status, rejectionComment) {
+    async function loadAvailability() {
       if (!isSuperAdmin) return;
+      qs("availabilityList").innerHTML = `<div class="text-sm muted">Loading…</div>`;
 
       try {
-        await updateDoc(doc(db, "leaveRequests", id), {
-          status,
-          rejectionComment: status === "rejected" ? rejectionComment : "",
-          reviewedAt: serverTimestamp(),
-          reviewedBy: currentUser?.email || "",
-        });
-
-        await loadAllLeaveRequests();
-        await loadAvailability();
-        await loadMyLeaveRequests();
-      } catch (err) {
-        console.error(err);
-        alert("Failed to update leave status: " + err.message);
-      }
-    }
-
-    // Top nominations
-    async function loadTopNominations() {
-      if (!isSuperAdmin) return;
-
-      topNominationsList.innerHTML = '<div class="text-slate-400">Loading nominations...</div>';
-
-      try {
-        const qNom = query(collection(db, "nominations"), orderBy("createdAt", "desc"));
-        const snap = await getDocs(qNom);
+        const qApp = query(collection(db, "leaveRequests"), where("status", "==", "approved"));
+        const snap = await getDocs(qApp);
 
         if (snap.empty) {
-          topNominationsList.innerHTML = '<div class="text-slate-400">No nominations yet.</div>';
+          qs("availabilityList").innerHTML = `<div class="text-sm muted">No approved leave yet.</div>`;
           return;
         }
 
-        const map = new Map();
-        snap.forEach((docSnap) => {
-          const d = docSnap.data();
-          const key = `${d.nomineeName || ""}||${d.nomineeDepartment || ""}`;
-          const current = map.get(key) || {
-            nomineeName: d.nomineeName || "",
-            nomineeDepartment: d.nomineeDepartment || "",
-            count: 0,
-            totalGuestPoints: 0,
-          };
-          current.count += 1;
-          current.totalGuestPoints += Number(d.guestFeedbackPoints || 0);
-          map.set(key, current);
-        });
+        const rows = [];
+        snap.forEach(d => rows.push(d.data()));
+        rows.sort((a,b) => (a.startDate || "").localeCompare(b.startDate || ""));
 
-        const rows = Array.from(map.values());
-        rows.sort((a, b) => {
-          if (b.count !== a.count) return b.count - a.count;
-          return b.totalGuestPoints - a.totalGuestPoints;
-        });
+        qs("availabilityList").innerHTML = rows.map(r => `
+          <div class="bg-white rounded-2xl border p-3">
+            <div class="flex justify-between">
+              <div class="text-sm font-black">${r.userName || r.userEmail}</div>
+              <div class="chip bg-slate-50 text-slate-700 uppercase">${r.type}</div>
+            </div>
+            <div class="text-xs muted">${r.startDate} → ${r.endDate}</div>
+          </div>
+        `).join("");
 
-        let html = `
-          <table class="min-w-full text-xs border border-slate-200 rounded-lg overflow-hidden bg-white">
-            <thead class="bg-slate-50">
-              <tr>
-                <th class="px-2 py-2 text-left">#</th>
-                <th class="px-2 py-2 text-left">Nominee</th>
-                <th class="px-2 py-2 text-left">Department</th>
-                <th class="px-2 py-2 text-right">Nominations</th>
-                <th class="px-2 py-2 text-right">Total Points</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-        rows.forEach((r, index) => {
-          html += `
-            <tr class="border-t">
-              <td class="px-2 py-2">${index + 1}</td>
-              <td class="px-2 py-2 font-semibold text-slate-900">${r.nomineeName}</td>
-              <td class="px-2 py-2 text-slate-700">${r.nomineeDepartment}</td>
-              <td class="px-2 py-2 text-right">${r.count}</td>
-              <td class="px-2 py-2 text-right">${r.totalGuestPoints}</td>
-            </tr>
-          `;
-        });
-        html += "</tbody></table>";
-
-        topNominationsList.innerHTML = html;
       } catch (err) {
         console.error(err);
-        topNominationsList.innerHTML = '<div class="text-red-500 text-xs">Failed to load top nominations.</div>';
+        qs("availabilityList").innerHTML = `<div class="text-sm text-rose-700">Failed to load availability.</div>`;
       }
     }
 
-    // Init defaults for unauth state (so fields not empty)
-    setDefaultMonths();
+    // Admin Config save
+    qs("saveConfigBtn").addEventListener("click", async () => {
+      if (!isSuperAdmin) return;
+
+      try {
+        const nominationsOpen = qs("cfgOpen").value === "true";
+        const closeAtDateStr = qs("cfgCloseAt").value;
+        const allowPhotoUpload = qs("cfgPhoto").value === "true";
+
+        const closeAt = closeAtDateStr
+          ? Timestamp.fromDate(new Date(closeAtDateStr + "T23:59:59"))
+          : Timestamp.fromDate(endOfMonthDate(new Date()));
+
+        await setDoc(CONFIG_DOC, {
+          nominationsOpen,
+          closeAt,
+          allowPhotoUpload,
+          updatedAt: serverTimestamp(),
+          updatedBy: currentUser?.email || "",
+        }, { merge: true });
+
+        qs("configMsg").textContent = "Saved ✅";
+        qs("configMsg").className = "text-sm text-emerald-700";
+        await loadConfig();
+      } catch (err) {
+        console.error(err);
+        qs("configMsg").textContent = "Save failed.";
+        qs("configMsg").className = "text-sm text-rose-700";
+      }
+    });
+
+    // Initial month fields defaults
+    const now = new Date();
+    qs("nominationMonth").value = monthKeyFromDate(now);
+    qs("historyMonth").value = monthKeyFromDate(now);
+
   </script>
 </body>
 </html>
